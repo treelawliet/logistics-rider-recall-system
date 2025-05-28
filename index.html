@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>即时物流骑手智能召回系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .feature-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            font-size: 18px;
+            padding: 20px 40px;
+        }
+
+        .quick-start {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .links-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .links-section h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .link-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .link-item:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .link-item a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 即时物流骑手智能召回系统</h1>
+            <p>基于多Agent协同的智能调度解决方案</p>
+            <p>Multi-Agent Collaborative Intelligent Rider Recall System</p>
+        </div>
+
+        <div class="quick-start">
+            <h2 style="margin-bottom: 20px; color: #333;">🚀 立即体验</h2>
+            <p style="color: #666; margin-bottom: 30px;">选择你喜欢的方式体验我们的智能召回系统</p>
+            <a href="demo_web.html" class="btn btn-primary">🌐 在线演示页面</a>
+            <a href="#local-setup" class="btn">💻 本地部署</a>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">多Agent协同</div>
+                <div class="feature-desc">
+                    5个专业Agent协同工作：预测分析师、决策协调员、骑手画像专家、召回执行员、数据分析师
+                </div>
+                <a href="demo_web.html?scenario=normal" class="btn">体验协同</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔮</div>
+                <div class="feature-title">智能预测</div>
+                <div class="feature-desc">
+                    基于历史数据、天气因素、节假日趋势等多维度分析，准确预测运力缺口
+                </div>
+                <a href="demo_web.html?scenario=busy" class="btn">查看预测</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📞</div>
+                <div class="feature-title">自动召回</div>
+                <div class="feature-desc">
+                    智能筛选候选骑手，自动执行电话召回，实时记录和分析召回效果
+                </div>
+                <a href="demo_web.html?scenario=crisis" class="btn">模拟召回</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">效果分析</div>
+                <div class="feature-desc">
+                    实时监控关键指标，生成详细分析报告，提供优化建议和改进方案
+                </div>
+                <a href="demo_web.html?scenario=random" class="btn">查看分析</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎮</div>
+                <div class="feature-title">交互演示</div>
+                <div class="feature-desc">
+                    多种演示模式，可视化界面，支持参数调整和场景切换
+                </div>
+                <a href="demo_web.html" class="btn">开始演示</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <div class="feature-title">在线体验</div>
+                <div class="feature-desc">
+                    无需安装任何软件，浏览器直接访问，支持手机和电脑多端体验
+                </div>
+                <a href="demo_web.html" class="btn">立即体验</a>
+            </div>
+        </div>
+
+        <div class="links-section">
+            <h3>📚 项目资源</h3>
+            <div class="links-grid">
+                <div class="link-item">
+                    <a href="README.md">📖 项目介绍</a>
+                </div>
+                <div class="link-item">
+                    <a href="USAGE_GUIDE.md">📋 使用指南</a>
+                </div>
+                <div class="link-item">
+                    <a href="PROJECT_SUMMARY.md">📊 项目总结</a>
+                </div>
+                <div class="link-item">
+                    <a href="DEPLOY.md">🚀 部署指南</a>
+                </div>
+                <div class="link-item">
+                    <a href="演示页面使用指南.md">🎮 演示说明</a>
+                </div>
+                <div class="link-item">
+                    <a href="CONTRIBUTING.md">🤝 贡献指南</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('即时物流骑手智能召回系统主页已加载');
+            
+            // 检查URL参数，如果有demo参数则自动跳转
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('demo') === 'true') {
+                window.location.href = 'demo_web.html';
+            }
+        });
+
+        // 本地部署说明
+        document.addEventListener('click', function(e) {
+            if (e.target.getAttribute('href') === '#local-setup') {
+                e.preventDefault();
+                alert(`本地部署步骤：
+
+1. 克隆项目：
+   git clone https://github.com/你的用户名/logistics-rider-recall-system.git
+
+2. 进入目录：
+   cd logistics-rider-recall-system
+
+3. 启动服务器：
+   python3 start_demo_server.py
+
+4. 浏览器访问：
+   http://localhost:8080/demo_web.html
+
+详细说明请查看 DEPLOY.md 文件`);
+            }
+        });
+    </script>
+</body>
+</html> 

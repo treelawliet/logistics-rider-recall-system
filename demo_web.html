@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>即时物流运力智能召回系统 - 演示页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .control-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .control-group select,
+        .control-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .control-group select:focus,
+        .control-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .workflow-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stage-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid #667eea;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .stage-card.active {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+        }
+
+        .stage-card.completed {
+            border-left-color: #17a2b8;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+
+        .stage-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stage-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+
+        .stage-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stage-content {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .results-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: #667eea;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .candidate-list {
+            margin-top: 15px;
+        }
+
+        .candidate-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .call-result {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+
+        .call-result.success {
+            background: #d4edda;
+            border-left: 3px solid #28a745;
+        }
+
+        .call-result.failed {
+            background: #f8d7da;
+            border-left: 3px solid #dc3545;
+        }
+
+        .call-result.no-answer {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+        }
+
+        @media (max-width: 768px) {
+            .control-row {
+                flex-direction: column;
+            }
+            
+            .workflow-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 即时物流骑手智能召回系统</h1>
+            <p>多Agent协同 · 智能预测 · 自动召回 · 效果分析</p>
+        </div>
+
+        <div class="control-panel">
+            <h3 style="margin-bottom: 20px; color: #333;">🎛️ 演示参数设置</h3>
+            <div class="control-row">
+                <div class="control-group">
+                    <label for="siteSelect">选择站点</label>
+                    <select id="siteSelect">
+                        <option value="site_001">北京朝阳站</option>
+                        <option value="site_002">上海浦东站</option>
+                        <option value="site_003">广州天河站</option>
+                        <option value="site_004">深圳南山站</option>
+                        <option value="site_005">杭州西湖站</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="dateInput">目标日期</label>
+                    <input type="date" id="dateInput">
+                </div>
+                <div class="control-group">
+                    <label for="scenarioSelect">演示场景</label>
+                    <select id="scenarioSelect">
+                        <option value="normal">正常场景 (轻微缺口)</option>
+                        <option value="busy">繁忙场景 (中等缺口)</option>
+                        <option value="crisis">危机场景 (严重缺口)</option>
+                        <option value="sufficient">充足场景 (无缺口)</option>
+                        <option value="random">随机场景</option>
+                    </select>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button class="btn" onclick="startDemo()">🚀 开始演示</button>
+                <button class="btn" onclick="resetDemo()" style="background: #6c757d;">🔄 重置</button>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>系统正在运行中，请稍候...</p>
+        </div>
+
+        <div class="workflow-container" id="workflowContainer">
+            <div class="stage-card" id="stage1">
+                <div class="stage-header">
+                    <div class="stage-icon">🔮</div>
+                    <div class="stage-title">预测分析</div>
+                </div>
+                <div class="stage-content" id="stage1Content">
+                    等待开始...
+                </div>
+            </div>
+
+            <div class="stage-card" id="stage2">
+                <div class="stage-header">
+                    <div class="stage-icon">📋</div>
+                    <div class="stage-title">决策确认</div>
+                </div>
+                <div class="stage-content" id="stage2Content">
+                    等待开始...
+                </div>
+            </div>
+
+            <div class="stage-card" id="stage3">
+                <div class="stage-header">
+                    <div class="stage-icon">👥</div>
+                    <div class="stage-title">骑手筛选</div>
+                </div>
+                <div class="stage-content" id="stage3Content">
+                    等待开始...
+                </div>
+            </div>
+
+            <div class="stage-card" id="stage4">
+                <div class="stage-header">
+                    <div class="stage-icon">📞</div>
+                    <div class="stage-title">召回执行</div>
+                </div>
+                <div class="stage-content" id="stage4Content">
+                    等待开始...
+                </div>
+            </div>
+
+            <div class="stage-card" id="stage5">
+                <div class="stage-header">
+                    <div class="stage-icon">📊</div>
+                    <div class="stage-title">效果分析</div>
+                </div>
+                <div class="stage-content" id="stage5Content">
+                    等待开始...
+                </div>
+            </div>
+        </div>
+
+        <div class="results-panel hidden" id="resultsPanel">
+            <h3 style="margin-bottom: 20px; color: #333;">📈 演示结果</h3>
+            <div class="metrics-grid" id="metricsGrid">
+                <!-- 动态生成指标卡片 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 设置默认日期为明天
+        document.getElementById('dateInput').value = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+        let currentStage = 0;
+        let demoData = {};
+
+        // 模拟数据生成函数
+        function generateDemoData(scenario) {
+            const sites = {
+                'site_001': '北京朝阳站',
+                'site_002': '上海浦东站', 
+                'site_003': '广州天河站',
+                'site_004': '深圳南山站',
+                'site_005': '杭州西湖站'
+            };
+
+            const siteId = document.getElementById('siteSelect').value;
+            const siteName = sites[siteId];
+            const targetDate = document.getElementById('dateInput').value;
+
+            let baseOrders, currentCapacity, gapRatio;
+
+            switch(scenario) {
+                case 'normal':
+                    baseOrders = 120 + Math.floor(Math.random() * 30);
+                    currentCapacity = Math.floor(baseOrders * 0.85);
+                    gapRatio = 0.1 + Math.random() * 0.1;
+                    break;
+                case 'busy':
+                    baseOrders = 150 + Math.floor(Math.random() * 50);
+                    currentCapacity = Math.floor(baseOrders * 0.7);
+                    gapRatio = 0.2 + Math.random() * 0.2;
+                    break;
+                case 'crisis':
+                    baseOrders = 200 + Math.floor(Math.random() * 80);
+                    currentCapacity = Math.floor(baseOrders * 0.6);
+                    gapRatio = 0.4 + Math.random() * 0.3;
+                    break;
+                case 'sufficient':
+                    baseOrders = 100 + Math.floor(Math.random() * 20);
+                    currentCapacity = Math.floor(baseOrders * 1.1);
+                    gapRatio = 0;
+                    break;
+                default:
+                    baseOrders = 100 + Math.floor(Math.random() * 100);
+                    currentCapacity = Math.floor(baseOrders * (0.6 + Math.random() * 0.4));
+                    gapRatio = Math.max(0, (baseOrders - currentCapacity) / baseOrders);
+            }
+
+            const requiredRiders = Math.max(0, Math.ceil((baseOrders - currentCapacity) * 1.2));
+            const candidatesCount = Math.min(requiredRiders, 5 + Math.floor(Math.random() * 10));
+            
+            return {
+                siteId,
+                siteName,
+                targetDate,
+                scenario,
+                prediction: {
+                    predictedOrders: baseOrders,
+                    currentCapacity,
+                    gapRatio,
+                    hasGap: gapRatio > 0.05,
+                    requiredRiders,
+                    confidence: 0.75 + Math.random() * 0.2
+                },
+                candidatesCount,
+                callResults: generateCallResults(candidatesCount),
+                analysis: {}
+            };
+        }
+
+        function generateCallResults(count) {
+            const names = ['张三', '李四', '王五', '赵六', '孙七', '周八', '吴九', '郑十', '王十一', '冯十二'];
+            const results = [];
+            
+            for(let i = 0; i < count; i++) {
+                const connected = Math.random() > 0.3;
+                const agreed = connected && Math.random() > 0.6;
+                
+                results.push({
+                    riderId: `rider_${i+1}`,
+                    name: names[i % names.length],
+                    connected,
+                    agreed,
+                    reason: agreed ? '同意出勤' : (connected ? ['有其他安排', '距离太远', '身体不适'][Math.floor(Math.random() * 3)] : '未接听'),
+                    callDuration: connected ? 20 + Math.floor(Math.random() * 60) : 0
+                });
+            }
+            
+            return results;
+        }
+
+        async function startDemo() {
+            const scenario = document.getElementById('scenarioSelect').value;
+            demoData = generateDemoData(scenario);
+            
+            // 重置界面
+            resetDemo();
+            
+            // 显示加载状态
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('workflowContainer').style.opacity = '0.5';
+            
+            // 开始执行各个阶段
+            await executeStage1();
+            await executeStage2();
+            await executeStage3();
+            await executeStage4();
+            await executeStage5();
+            
+            // 隐藏加载状态
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('workflowContainer').style.opacity = '1';
+            
+            // 显示结果
+            showResults();
+        }
+
+        async function executeStage1() {
+            await setStageActive(1);
+            updateProgress(20);
+            
+            const content = `
+                <div class="alert alert-success">
+                    <strong>🔮 预测分析师正在工作...</strong><br>
+                    站点: ${demoData.siteName}<br>
+                    目标日期: ${demoData.targetDate}
+                </div>
+                <p><strong>预测结果:</strong></p>
+                <ul>
+                    <li>预计订单: <strong>${demoData.prediction.predictedOrders}</strong> 单</li>
+                    <li>当前运力: <strong>${demoData.prediction.currentCapacity}</strong> 人</li>
+                    <li>缺口比例: <strong>${(demoData.prediction.gapRatio * 100).toFixed(1)}%</strong></li>
+                    <li>需要召回: <strong>${demoData.prediction.requiredRiders}</strong> 人</li>
+                    <li>预测置信度: <strong>${(demoData.prediction.confidence * 100).toFixed(1)}%</strong></li>
+                </ul>
+                ${demoData.prediction.hasGap ? 
+                    '<div class="alert alert-warning">⚠️ 检测到运力缺口，建议启动召回流程</div>' : 
+                    '<div class="alert alert-success">✅ 运力充足，无需召回</div>'
+                }
+            `;
+            
+            document.getElementById('stage1Content').innerHTML = content;
+            await setStageCompleted(1);
+            await sleep(1000);
+        }
+
+        async function executeStage2() {
+            await setStageActive(2);
+            updateProgress(40);
+            
+            const decision = demoData.prediction.hasGap;
+            
+            const content = `
+                <div class="alert alert-success">
+                    <strong>📋 决策协调员正在联系站长...</strong>
+                </div>
+                <p><strong>站长反馈:</strong></p>
+                <div class="alert ${decision ? 'alert-success' : 'alert-warning'}">
+                    ${decision ? '✅ 同意启动召回流程' : '❌ 暂不启动召回'}
+                    <br>
+                    <small>${decision ? '缺口较大，必须召回' : '运力基本充足'}</small>
+                </div>
+                <p><strong>决策结果:</strong> ${decision ? '进入骑手筛选阶段' : '结束流程'}</p>
+            `;
+            
+            document.getElementById('stage2Content').innerHTML = content;
+            await setStageCompleted(2);
+            await sleep(1000);
+        }
+
+        async function executeStage3() {
+            await setStageActive(3);
+            updateProgress(60);
+            
+            if (!demoData.prediction.hasGap) {
+                document.getElementById('stage3Content').innerHTML = '<p>无需筛选骑手</p>';
+                await setStageCompleted(3);
+                return;
+            }
+            
+            const urgency = demoData.prediction.gapRatio > 0.3 ? 'high' : (demoData.prediction.gapRatio > 0.15 ? 'medium' : 'low');
+            
+            let candidatesList = '';
+            demoData.callResults.slice(0, 3).forEach((rider, index) => {
+                candidatesList += `
+                    <div class="candidate-item">
+                        ${index + 1}. ${rider.name} (评分: ${(8.5 + Math.random() * 1.5).toFixed(1)}, 距离: ${(1 + Math.random() * 8).toFixed(1)}km)
+                    </div>
+                `;
+            });
+            
+            const content = `
+                <div class="alert alert-success">
+                    <strong>👥 骑手画像专家正在筛选...</strong>
+                </div>
+                <p><strong>筛选参数:</strong></p>
+                <ul>
+                    <li>需要骑手: <strong>${demoData.prediction.requiredRiders}</strong> 人</li>
+                    <li>紧急程度: <strong>${urgency}</strong></li>
+                    <li>筛选范围: 5公里内</li>
+                </ul>
+                <p><strong>候选骑手 (前3名):</strong></p>
+                ${candidatesList}
+                <div class="alert alert-success">
+                    ✅ 共找到 <strong>${demoData.candidatesCount}</strong> 名候选骑手
+                </div>
+            `;
+            
+            document.getElementById('stage3Content').innerHTML = content;
+            await setStageCompleted(3);
+            await sleep(1000);
+        }
+
+        async function executeStage4() {
+            await setStageActive(4);
+            updateProgress(80);
+            
+            if (!demoData.prediction.hasGap) {
+                document.getElementById('stage4Content').innerHTML = '<p>无需执行召回</p>';
+                await setStageCompleted(4);
+                return;
+            }
+            
+            let callsList = '';
+            let connectedCount = 0;
+            let agreedCount = 0;
+            
+            demoData.callResults.forEach((result, index) => {
+                if (result.connected) connectedCount++;
+                if (result.agreed) agreedCount++;
+                
+                const statusClass = result.agreed ? 'success' : (result.connected ? 'failed' : 'no-answer');
+                const statusIcon = result.agreed ? '✅' : (result.connected ? '📞' : '❌');
+                
+                callsList += `
+                    <div class="call-result ${statusClass}">
+                        ${statusIcon} ${result.name} - ${result.reason}
+                        ${result.connected ? ` (${result.callDuration}秒)` : ''}
+                    </div>
+                `;
+            });
+            
+            const content = `
+                <div class="alert alert-success">
+                    <strong>📞 召回执行员正在拨打电话...</strong>
+                </div>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    ${callsList}
+                </div>
+                <div class="alert alert-success">
+                    📊 拨打完成: ${demoData.callResults.length}次 | 接通: ${connectedCount}次 | 同意: ${agreedCount}次
+                </div>
+            `;
+            
+            document.getElementById('stage4Content').innerHTML = content;
+            await setStageCompleted(4);
+            await sleep(1000);
+        }
+
+        async function executeStage5() {
+            await setStageActive(5);
+            updateProgress(100);
+            
+            const totalCalls = demoData.callResults.length;
+            const connectedCalls = demoData.callResults.filter(r => r.connected).length;
+            const agreedCalls = demoData.callResults.filter(r => r.agreed).length;
+            
+            const connectionRate = totalCalls > 0 ? (connectedCalls / totalCalls) : 0;
+            const successRate = totalCalls > 0 ? (agreedCalls / totalCalls) : 0;
+            const agreementRate = connectedCalls > 0 ? (agreedCalls / connectedCalls) : 0;
+            const targetMet = agreedCalls >= demoData.prediction.requiredRiders;
+            
+            demoData.analysis = {
+                totalCalls,
+                connectedCalls,
+                agreedCalls,
+                connectionRate,
+                successRate,
+                agreementRate,
+                targetMet
+            };
+            
+            const content = `
+                <div class="alert alert-success">
+                    <strong>📊 数据分析师正在分析效果...</strong>
+                </div>
+                <p><strong>关键指标:</strong></p>
+                <ul>
+                    <li>拨打总数: <strong>${totalCalls}</strong></li>
+                    <li>接通率: <strong>${(connectionRate * 100).toFixed(1)}%</strong></li>
+                    <li>成功率: <strong>${(successRate * 100).toFixed(1)}%</strong></li>
+                    <li>同意率: <strong>${(agreementRate * 100).toFixed(1)}%</strong></li>
+                </ul>
+                <div class="alert ${targetMet ? 'alert-success' : 'alert-warning'}">
+                    ${targetMet ? '🎉 目标达成！' : '⚠️ 目标未达成'} 
+                    (${agreedCalls}/${demoData.prediction.requiredRiders})
+                </div>
+                <p><strong>改进建议:</strong></p>
+                <ul>
+                    ${successRate < 0.3 ? '<li>优化筛选标准，提高候选质量</li>' : ''}
+                    ${connectionRate < 0.7 ? '<li>调整拨打时间，提高接通率</li>' : ''}
+                    ${!targetMet ? '<li>扩大候选范围或增加激励措施</li>' : ''}
+                    <li>持续优化骑手画像算法</li>
+                </ul>
+            `;
+            
+            document.getElementById('stage5Content').innerHTML = content;
+            await setStageCompleted(5);
+        }
+
+        function showResults() {
+            const panel = document.getElementById('resultsPanel');
+            const grid = document.getElementById('metricsGrid');
+            
+            const metrics = [
+                { label: '预测订单', value: demoData.prediction.predictedOrders, unit: '单' },
+                { label: '运力缺口', value: (demoData.prediction.gapRatio * 100).toFixed(1), unit: '%' },
+                { label: '候选骑手', value: demoData.candidatesCount, unit: '人' },
+                { label: '接通率', value: (demoData.analysis.connectionRate * 100).toFixed(1), unit: '%' },
+                { label: '成功率', value: (demoData.analysis.successRate * 100).toFixed(1), unit: '%' },
+                { label: '实际召回', value: demoData.analysis.agreedCalls, unit: '人' }
+            ];
+            
+            grid.innerHTML = metrics.map(metric => `
+                <div class="metric-card">
+                    <div class="metric-value">${metric.value}${metric.unit}</div>
+                    <div class="metric-label">${metric.label}</div>
+                </div>
+            `).join('');
+            
+            panel.classList.remove('hidden');
+        }
+
+        async function setStageActive(stageNum) {
+            // 清除所有状态
+            for(let i = 1; i <= 5; i++) {
+                const stage = document.getElementById(`stage${i}`);
+                stage.classList.remove('active', 'completed');
+            }
+            
+            // 设置当前阶段为活跃
+            const currentStage = document.getElementById(`stage${stageNum}`);
+            currentStage.classList.add('active');
+            
+            await sleep(500);
+        }
+
+        async function setStageCompleted(stageNum) {
+            const stage = document.getElementById(`stage${stageNum}`);
+            stage.classList.remove('active');
+            stage.classList.add('completed');
+            
+            await sleep(300);
+        }
+
+        function updateProgress(percentage) {
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function resetDemo() {
+            // 重置进度条
+            updateProgress(0);
+            
+            // 重置所有阶段
+            for(let i = 1; i <= 5; i++) {
+                const stage = document.getElementById(`stage${i}`);
+                stage.classList.remove('active', 'completed');
+                document.getElementById(`stage${i}Content`).innerHTML = '等待开始...';
+            }
+            
+            // 隐藏结果面板
+            document.getElementById('resultsPanel').classList.add('hidden');
+            
+            // 隐藏加载状态
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('workflowContainer').style.opacity = '1';
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('即时物流骑手智能召回系统演示页面已加载');
+        });
+    </script>
+</body>
+</html> 
